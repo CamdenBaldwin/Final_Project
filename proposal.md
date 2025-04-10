@@ -1,7 +1,7 @@
 # The Edge of the World
 
 ## Repository
-https://github.com/CamdenBaldwin/Proposal
+https://github.com/CamdenBaldwin/Final_Project
 
 ## Description
 Going to be a single "room" of sorts to show off NPC dialogue. Will include exploring an environment, sprite animations, and NPC interactibility. Relevant as it will be a form of art in that it will be an early concept of a game that could be fleshed out into an actual full on game
