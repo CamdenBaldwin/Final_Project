@@ -2,6 +2,29 @@ import random
 import pygame
 import pygame.freetype
 
+class Paths():
+    def __init__(self):
+        self.background = pygame.image.load('images\\village\\pathsgrass.png')
+        width = self.background.get_width()
+        height = self.background.get_height()
+        self.background = pygame.transform.scale(self.background, (width/2.5, height/2.5))
+        self.x = -200
+        self.y = -1950
+
+    def update(self, direction):
+        if direction == "w":
+            self.y += 20
+        elif direction == "a":
+            self.x += 20
+        elif direction == "s":
+            self.y -= 20
+        elif direction == "d":
+            self.x -= 20
+        else:
+            pass
+    def draw(self, surface):
+        surface.blit(self.background, (self.x, self.y))
+
 class Player():
 
     def __init__(self):
@@ -9,22 +32,22 @@ class Player():
     
     def update(self, direction, walking):
         if direction == "w":
-            if walking >= 7:
+            if walking >= 13:
                 self.sprite = pygame.image.load('images\player\\back1.png')
             else:
                 self.sprite = pygame.image.load('images\player\\back2.png')
         elif direction == "a":
-            if walking >= 7:
+            if walking >= 13:
                 self.sprite = pygame.image.load('images\player\left1.png')
             else:
                 self.sprite = pygame.image.load('images\player\left2.png')
         elif direction == "s":
-            if walking >= 7:
+            if walking >= 13:
                 self.sprite = pygame.image.load('images\player\\walk1.png')
             else:
                 self.sprite = pygame.image.load('images\player\\walk2.png')
         elif direction == "d":
-            if walking >= 7:
+            if walking >= 13:
                 self.sprite = pygame.image.load('images\player\\right1.png')
             else:
                 self.sprite = pygame.image.load('images\player\\right2.png')
@@ -46,6 +69,7 @@ def main():
     res = (1920, 1020)
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
     player = Player()
+    background = Paths()
     keydown = ""
     walking = 0
     start_music()
@@ -74,16 +98,16 @@ def main():
             keydown = "d"
         # Game Logic
         walking += 1
-        if walking >= 13:
+        if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
+        background.update(keydown)
         player.update(keydown, walking)
         # Render and Display
-        black = pygame.Color(0, 0, 0)
-        screen.fill(black)
+        background.draw(screen)
         player.draw(screen, displayInfo)
         pygame.display.flip()
-        dt = clock.tick(12)
+        dt = clock.tick(24)
     pygame.mixer.music.unload()
     pygame.quit()
 
