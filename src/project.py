@@ -7,17 +7,33 @@ class Player():
     def __init__(self):
         self.sprite = pygame.image.load('images\player\gloop.png')
     
-    def update(self, direction):
+    def update(self, direction, walking):
         if direction == "w":
-            self.sprite = pygame.image.load('images\player\\back1.png')
+            if walking >= 7:
+                self.sprite = pygame.image.load('images\player\\back1.png')
+            else:
+                self.sprite = pygame.image.load('images\player\\back2.png')
         elif direction == "a":
-            self.sprite = pygame.image.load('images\player\left1.png')
+            if walking >= 7:
+                self.sprite = pygame.image.load('images\player\left1.png')
+            else:
+                self.sprite = pygame.image.load('images\player\left2.png')
         elif direction == "s":
-            self.sprite = pygame.image.load('images\player\\walk1.png')
+            if walking >= 7:
+                self.sprite = pygame.image.load('images\player\\walk1.png')
+            else:
+                self.sprite = pygame.image.load('images\player\\walk2.png')
         elif direction == "d":
-            self.sprite = pygame.image.load('images\player\\right1.png')
+            if walking >= 7:
+                self.sprite = pygame.image.load('images\player\\right1.png')
+            else:
+                self.sprite = pygame.image.load('images\player\\right2.png')
         else:
             self.sprite = pygame.image.load('images\player\gloop.png')
+        width = self.sprite.get_width()
+        height = self.sprite.get_height()
+        self.sprite = pygame.transform.scale(self.sprite, (width/2.2, height/2.2))
+
 
     def draw(self, surface, displayInfo):
         surface.blit(self.sprite, (int((displayInfo.current_w/2)-(self.sprite.get_width()/2)), int((displayInfo.current_h/2)-(self.sprite.get_height()/2))))
@@ -31,6 +47,7 @@ def main():
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
     player = Player()
     keydown = ""
+    walking = 0
     start_music()
     running = True
     fullscreen = False
@@ -56,14 +73,17 @@ def main():
         elif pressed[pygame.K_d]:
             keydown = "d"
         # Game Logic
+        walking += 1
+        if walking >= 13:
+            walking = 0
         displayInfo = pygame.display.Info()
-        player.update(keydown)
+        player.update(keydown, walking)
         # Render and Display
         black = pygame.Color(0, 0, 0)
         screen.fill(black)
         player.draw(screen, displayInfo)
         pygame.display.flip()
-        dt=clock.tick(12)
+        dt = clock.tick(12)
     pygame.mixer.music.unload()
     pygame.quit()
 
