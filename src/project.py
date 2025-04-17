@@ -25,7 +25,30 @@ class Houseroof():
     def draw(self, surface):
         surface.blit(self.roof, (self.x, self.y))
 
-class Housebase():
+class Houseroof():
+    def __init__(self, roof, x, y):
+        self.roof = roof
+        self.width = self.roof.get_width()
+        self.height = self.roof.get_height()
+        self.roof = pygame.transform.scale(self.roof, (self.width/2.5, self.height/2.5))
+        self.x = x
+        self.y = y
+    def update(self, direction):
+        if direction == "w":
+            self.y += 16
+        elif direction == "a":
+            self.x += 16
+        elif direction == "s":
+            self.y -= 16
+        elif direction == "d":
+            self.x -= 16
+        else:
+            pass
+
+    def draw(self, surface):
+        surface.blit(self.roof, (self.x, self.y))
+
+class Obstructable():
     def __init__(self, base, x, y):
         self.base = base
         self.width = self.base.get_width()
@@ -133,12 +156,14 @@ def main():
     background = Paths()
     keydown = ""
     lastkey = ""
-    house1base = Housebase(pygame.image.load('images\\village\\house1door.png'), 107, -158)
-    house2base = Housebase(pygame.image.load('images\\village\\house2door.png'), 1307, -158)
-    house3base = Housebase(pygame.image.load('images\\village\\house1door.png'), 2155, -150)
+    house1base = Obstructable(pygame.image.load('images\\village\\house1door.png'), 107, -158)
+    house2base = Obstructable(pygame.image.load('images\\village\\house2door.png'), 1307, -158)
+    house3base = Obstructable(pygame.image.load('images\\village\\house1door.png'), 2155, -150)
     house1roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 83, -366)
     house2roof = Houseroof(pygame.image.load('images\\village\\house2roof.png'), 1267, -366)
     house3roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 2131, -358)
+    rail1 = Obstructable(pygame.image.load('images\\village\\rail1.png'), -277, -526)
+    rail2 = Obstructable(pygame.image.load('images\\village\\rail2.png'), 2427, -526)
     black = (0,0,0)
     walking = 0
     start_music()
@@ -178,6 +203,8 @@ def main():
         house1base.update(keydown)
         house2base.update(keydown)
         house3base.update(keydown)
+        rail1.update(keydown)
+        rail2.update(keydown)
         player.update(keydown, lastkey, walking)
         house1roof.update(keydown)
         house2roof.update(keydown)
@@ -188,6 +215,8 @@ def main():
         house1base.draw(screen)
         house2base.draw(screen)
         house3base.draw(screen)
+        rail1.draw(screen)
+        rail2.draw(screen)
         player.draw(screen, displayInfo)
         house1roof.draw(screen)
         house2roof.draw(screen)
