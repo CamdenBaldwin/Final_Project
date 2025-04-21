@@ -2,14 +2,14 @@ import random
 import pygame
 import pygame.freetype
 
-class Houseroof():
-    def __init__(self, roof, x, y):
-        self.roof = roof
-        self.width = self.roof.get_width()
-        self.height = self.roof.get_height()
-        self.roof = pygame.transform.scale(self.roof, (self.width/2.5, self.height/2.5))
-        self.x = x
-        self.y = y
+class Spacesea():
+    def __init__(self):
+        self.sea = pygame.image.load('images\\village\\spacesea.png')
+        self.width = self.sea.get_width()
+        self.height = self.sea.get_height()
+        self.x = -631
+        self.y = -2054
+
     def update(self, direction):
         if direction == "w":
             self.y += 16
@@ -23,7 +23,7 @@ class Houseroof():
             pass
 
     def draw(self, surface):
-        surface.blit(self.roof, (self.x, self.y))
+        surface.blit(self.sea, (self.x, self.y))
 
 class Houseroof():
     def __init__(self, roof, x, y):
@@ -33,6 +33,7 @@ class Houseroof():
         self.roof = pygame.transform.scale(self.roof, (self.width/2.5, self.height/2.5))
         self.x = x
         self.y = y
+
     def update(self, direction):
         if direction == "w":
             self.y += 16
@@ -77,7 +78,7 @@ class Paths():
         self.width = self.background.get_width()
         self.height = self.background.get_height()
         self.background = pygame.transform.scale(self.background, (self.width/2.5, self.height/2.5))
-        self.x = -285
+        self.x = -407
         self.y = -1950
 
     def update(self, direction):
@@ -152,18 +153,9 @@ def main():
     dt = 0
     res = (1920, 1020)
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-    player = Player()
-    background = Paths()
+    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2 = obj_creation()
     keydown = ""
     lastkey = ""
-    house1base = Obstructable(pygame.image.load('images\\village\\house1door.png'), 107, -158)
-    house2base = Obstructable(pygame.image.load('images\\village\\house2door.png'), 1307, -158)
-    house3base = Obstructable(pygame.image.load('images\\village\\house1door.png'), 2155, -150)
-    house1roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 83, -366)
-    house2roof = Houseroof(pygame.image.load('images\\village\\house2roof.png'), 1267, -366)
-    house3roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 2131, -358)
-    rail1 = Obstructable(pygame.image.load('images\\village\\rail1.png'), -277, -526)
-    rail2 = Obstructable(pygame.image.load('images\\village\\rail2.png'), 2427, -526)
     black = (0,0,0)
     walking = 0
     start_music()
@@ -180,51 +172,78 @@ def main():
                     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                 else:
                     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-        pressed = pygame.key.get_pressed()
-        keydown=""
-        if pressed[pygame.K_w]:
-            keydown = "w"
-            lastkey = "w"
-        elif pressed[pygame.K_a]:
-            keydown = "a"
-            lastkey = "a"
-        elif pressed[pygame.K_s]:
-            keydown = "s"
-            lastkey = "s"
-        elif pressed[pygame.K_d]:
-            keydown = "d"
-            lastkey = "d"
+        keydown, lastkey = get_keydown(lastkey)
         # Game Logic
         walking += 1
         if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
-        background.update(keydown)
-        house1base.update(keydown)
-        house2base.update(keydown)
-        house3base.update(keydown)
-        rail1.update(keydown)
-        rail2.update(keydown)
-        player.update(keydown, lastkey, walking)
-        house1roof.update(keydown)
-        house2roof.update(keydown)
-        house3roof.update(keydown)
+        upd_code(keydown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof)
         # Render and Display
-        screen.fill(black)
-        background.draw(screen)
-        house1base.draw(screen)
-        house2base.draw(screen)
-        house3base.draw(screen)
-        rail1.draw(screen)
-        rail2.draw(screen)
-        player.draw(screen, displayInfo)
-        house1roof.draw(screen)
-        house2roof.draw(screen)
-        house3roof.draw(screen)
+        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof)
         pygame.display.flip()
         dt = clock.tick(24)
     pygame.mixer.music.unload()
     pygame.quit()
+
+def obj_creation():
+    player = Player()
+    background = Paths()
+    spacesea = Spacesea()
+    house1base = Obstructable(pygame.image.load('images\\village\\house1door.png'), -15, -158)
+    house2base = Obstructable(pygame.image.load('images\\village\\house2door.png'), 1185, -158)
+    house3base = Obstructable(pygame.image.load('images\\village\\house1door.png'), 2033, -150)
+    house1roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), -39, -366)
+    house2roof = Houseroof(pygame.image.load('images\\village\\house2roof.png'), 1145, -366)
+    house3roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 2009, -358)
+    rail1 = Obstructable(pygame.image.load('images\\village\\rail1.png'), -399, -526)
+    rail2 = Obstructable(pygame.image.load('images\\village\\rail2.png'), 2305, -526)
+    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2
+
+def upd_code(keydown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof):
+    spacesea.update(keydown)
+    background.update(keydown)
+    house1base.update(keydown)
+    house2base.update(keydown)
+    house3base.update(keydown)
+    rail1.update(keydown)
+    rail2.update(keydown)
+    player.update(keydown, lastkey, walking)
+    house1roof.update(keydown)
+    house2roof.update(keydown)
+    house3roof.update(keydown)
+
+def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof):
+    screen.fill(black)
+    spacesea.draw(screen)
+    background.draw(screen)
+    house1base.draw(screen)
+    house2base.draw(screen)
+    house3base.draw(screen)
+    rail1.draw(screen)
+    rail2.draw(screen)
+    player.draw(screen, displayInfo)
+    house1roof.draw(screen)
+    house2roof.draw(screen)
+    house3roof.draw(screen)
+
+def get_keydown(lastkey):
+    pressed = pygame.key.get_pressed()
+    keydown=""
+    lastkey = lastkey
+    if pressed[pygame.K_w]:
+        keydown = "w"
+        lastkey = "w"
+    elif pressed[pygame.K_a]:
+        keydown = "a"
+        lastkey = "a"
+    elif pressed[pygame.K_s]:
+        keydown = "s"
+        lastkey = "s"
+    elif pressed[pygame.K_d]:
+        keydown = "d"
+        lastkey = "d"
+    return keydown, lastkey
 
 def start_music():
     pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
