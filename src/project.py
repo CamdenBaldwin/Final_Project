@@ -4,10 +4,41 @@ import pygame.freetype
 
 
 class NPC():
-    def __init__(self, character, x, y):
+    def __init__(self, character, identity, x, y):
         self.character = pygame.transform.scale(character, (character.get_width()/2.5, character.get_height()/2.5))
+        self.identifier = identity
         self.x = x
         self.y = y
+
+    def update(self, wdown, adown, sdown, ddown, walking):
+        if wdown:
+            self.y += 16
+        if adown:
+            self.x += 16
+        if sdown:
+            self.y -= 16
+        if ddown:
+            self.x -= 16
+        if sdown and wdown:
+            pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
+        
+    def draw(self, surface):
+        surface.blit(self.character, (self.x, self.y))
 
 class Spacesea():
     def __init__(self):
@@ -17,17 +48,32 @@ class Spacesea():
         self.x = -631
         self.y = -2054
 
-    def update(self, direction):
-        if direction == "w":
+    def update(self, wdown, adown, sdown, ddown):
+        if wdown:
             self.y += 16
-        elif direction == "a":
+        if adown:
             self.x += 16
-        elif direction == "s":
+        if sdown:
             self.y -= 16
-        elif direction == "d":
+        if ddown:
             self.x -= 16
-        else:
+        if sdown and wdown:
             pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
 
     def draw(self, surface):
         surface.blit(self.sea, (self.x, self.y))
@@ -38,17 +84,32 @@ class Houseroof():
         self.x = x
         self.y = y
 
-    def update(self, direction):
-        if direction == "w":
+    def update(self, wdown, adown, sdown, ddown):
+        if wdown:
             self.y += 16
-        elif direction == "a":
+        if adown:
             self.x += 16
-        elif direction == "s":
+        if sdown:
             self.y -= 16
-        elif direction == "d":
+        if ddown:
             self.x -= 16
-        else:
+        if sdown and wdown:
             pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
 
     def draw(self, surface):
         surface.blit(self.roof, (self.x, self.y))
@@ -59,17 +120,33 @@ class Obstructable():
         self.x = x
         self.y = y
     
-    def update(self, direction):
-        if direction == "w":
+    def update(self, wdown, adown, sdown, ddown):
+        if wdown:
             self.y += 16
-        elif direction == "a":
+        if adown:
             self.x += 16
-        elif direction == "s":
+        if sdown:
             self.y -= 16
-        elif direction == "d":
+        if ddown:
             self.x -= 16
-        else:
+        if sdown and wdown:
             pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
+
     def draw(self, surface):
         surface.blit(self.base, (self.x, self.y))
 
@@ -80,17 +157,32 @@ class Paths():
         self.x = -407
         self.y = -1950
 
-    def update(self, direction):
-        if direction == "w":
+    def update(self, wdown, adown, sdown, ddown):
+        if wdown:
             self.y += 16
-        elif direction == "a":
+        if adown:
             self.x += 16
-        elif direction == "s":
+        if sdown:
             self.y -= 16
-        elif direction == "d":
+        if ddown:
             self.x -= 16
-        else:
+        if sdown and wdown:
             pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
 
     def draw(self, surface):
         surface.blit(self.background, (self.x, self.y))
@@ -99,36 +191,41 @@ class Player():
 
     def __init__(self):
         self.sprite = pygame.image.load('images\\player\\gloopss.png')
+        self.sprite = pygame.transform.scale(self.sprite, (self.sprite.get_width()/2.5, self.sprite.get_height()/2.5))
     
-    def update(self, direction, lastkey, walking):
-        if direction == "w":
+    def update(self, wdown, adown, sdown, ddown, lastkey, walking):
+        if wdown and not sdown:
             if walking >= 7 and walking <=12:
                 self.sprite = pygame.image.load('images\\player\\back1.png')
             elif walking >= 19:
                 self.sprite = pygame.image.load('images\\player\\back2.png')
             else:
                 self.sprite = pygame.image.load('images\\player\\gloopws.png')
-        elif direction == "a":
-            if walking >= 7 and walking <=12:
-                self.sprite = pygame.image.load('images\\player\\left1.png')
-            elif walking >= 19:
-                self.sprite = pygame.image.load('images\\player\\left2.png')
-            else:
-                self.sprite = pygame.image.load('images\\player\\gloopas.png')
-        elif direction == "s":
+        elif sdown and not wdown:
             if walking >= 7 and walking <=12:
                 self.sprite = pygame.image.load('images\\player\\walk1.png')
             elif walking >= 19:
                 self.sprite = pygame.image.load('images\\player\\walk2.png')
             else:
                 self.sprite = pygame.image.load('images\\player\\gloopss.png')
-        elif direction == "d":
+        elif adown and not ddown:
+            if walking >= 7 and walking <=12:
+                self.sprite = pygame.image.load('images\\player\\left1.png')
+            elif walking >= 19:
+                self.sprite = pygame.image.load('images\\player\\left2.png')
+            else:
+                self.sprite = pygame.image.load('images\\player\\gloopas.png')
+        elif ddown and not adown:
             if walking >= 7 and walking <=12:
                 self.sprite = pygame.image.load('images\\player\\right1.png')
             elif walking >= 19:
                 self.sprite = pygame.image.load('images\\player\\right2.png')
             else:
                 self.sprite = pygame.image.load('images\\player\\gloopds.png')
+        elif adown and ddown:
+            self.sprite = pygame.image.load('images\\player\\gloopss.png')
+        elif wdown and sdown:
+            self.sprite = pygame.image.load('images\\player\\gloopss.png')
         elif lastkey == "w":
             self.sprite = pygame.image.load('images\\player\\gloopws.png')
         elif lastkey == "a":
@@ -137,9 +234,7 @@ class Player():
             self.sprite = pygame.image.load('images\\player\\gloopds.png')
         else:
             self.sprite = pygame.image.load('images\\player\\gloopss.png')
-        width = self.sprite.get_width()
-        height = self.sprite.get_height()
-        self.sprite = pygame.transform.scale(self.sprite, (width/2.2, height/2.2))
+        self.sprite = pygame.transform.scale(self.sprite, (self.sprite.get_width()/2.5, self.sprite.get_height()/2.5))
 
 
     def draw(self, surface, displayInfo):
@@ -152,9 +247,13 @@ def main():
     dt = 0
     res = (1920, 1020)
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2 = obj_creation()
+    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret = obj_creation()
     keydown = ""
     lastkey = ""
+    wdown = False
+    adown = False
+    sdown = False
+    ddown = False
     black = (0,0,0)
     walking = 0
     start_music()
@@ -171,15 +270,15 @@ def main():
                     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                 else:
                     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-        keydown, lastkey = get_keydown(lastkey)
+        wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey)
         # Game Logic
         walking += 1
         if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
-        upd_code(keydown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof)
+        upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret)
         # Render and Display
-        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof)
+        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret)
         pygame.display.flip()
         dt = clock.tick(24)
     pygame.mixer.music.unload()
@@ -197,22 +296,29 @@ def obj_creation():
     house3roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 2009, -358)
     rail1 = Obstructable(pygame.image.load('images\\village\\rail1.png'), -399, -526)
     rail2 = Obstructable(pygame.image.load('images\\village\\rail2.png'), 2305, -526)
-    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2
+    tomato = NPC(pygame.image.load('images\\tomato\\tomat.png'), "tomato", -200, -400)
+    markiplier = NPC(pygame.image.load('images\\markiplier\\mark.png'), "mark", 2145, -1446)
+    furret = NPC(pygame.image.load('images\\furret\\furret1.png'), "furret", 2401, -1062)
 
-def upd_code(keydown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof):
-    spacesea.update(keydown)
-    background.update(keydown)
-    house1base.update(keydown)
-    house2base.update(keydown)
-    house3base.update(keydown)
-    rail1.update(keydown)
-    rail2.update(keydown)
-    player.update(keydown, lastkey, walking)
-    house1roof.update(keydown)
-    house2roof.update(keydown)
-    house3roof.update(keydown)
+    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret
 
-def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof):
+def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret):
+    spacesea.update(wdown, adown, sdown, ddown)
+    background.update(wdown, adown, sdown, ddown)
+    house1base.update(wdown, adown, sdown, ddown)
+    house2base.update(wdown, adown, sdown, ddown)
+    house3base.update(wdown, adown, sdown, ddown)
+    rail1.update(wdown, adown, sdown, ddown)
+    rail2.update(wdown, adown, sdown, ddown)
+    tomato.update(wdown, adown, sdown, ddown, walking)
+    markiplier.update(wdown, adown, sdown, ddown, walking)
+    furret.update(wdown, adown, sdown, ddown, walking)
+    player.update(wdown, adown, sdown, ddown, lastkey, walking)
+    house1roof.update(wdown, adown, sdown, ddown)
+    house2roof.update(wdown, adown, sdown, ddown)
+    house3roof.update(wdown, adown, sdown, ddown)
+
+def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret):
     screen.fill(black)
     spacesea.draw(screen)
     background.draw(screen)
@@ -221,6 +327,9 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     house3base.draw(screen)
     rail1.draw(screen)
     rail2.draw(screen)
+    tomato.draw(screen)
+    markiplier.draw(screen)
+    furret.draw(screen)
     player.draw(screen, displayInfo)
     house1roof.draw(screen)
     house2roof.draw(screen)
@@ -230,19 +339,23 @@ def get_keydown(lastkey):
     pressed = pygame.key.get_pressed()
     keydown=""
     lastkey = lastkey
+    wdown = False
+    adown = False
+    sdown = False
+    ddown = False
     if pressed[pygame.K_w]:
-        keydown = "w"
+        wdown = True
         lastkey = "w"
-    elif pressed[pygame.K_a]:
-        keydown = "a"
+    if pressed[pygame.K_a]:
+        adown = True
         lastkey = "a"
-    elif pressed[pygame.K_s]:
-        keydown = "s"
+    if pressed[pygame.K_s]:
+        sdown = True
         lastkey = "s"
-    elif pressed[pygame.K_d]:
-        keydown = "d"
+    if pressed[pygame.K_d]:
+        ddown = True
         lastkey = "d"
-    return keydown, lastkey
+    return wdown, adown, sdown, ddown, lastkey
 
 def start_music():
     pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
