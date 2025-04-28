@@ -2,6 +2,13 @@ import random
 import pygame
 import pygame.freetype
 
+
+class NPC():
+    def __init__(self, character, x, y):
+        self.character = pygame.transform.scale(character, (character.get_width()/2.5, character.get_height()/2.5))
+        self.x = x
+        self.y = y
+
 class Spacesea():
     def __init__(self):
         self.sea = pygame.image.load('images\\village\\spacesea.png')
@@ -27,10 +34,7 @@ class Spacesea():
 
 class Houseroof():
     def __init__(self, roof, x, y):
-        self.roof = roof
-        self.width = self.roof.get_width()
-        self.height = self.roof.get_height()
-        self.roof = pygame.transform.scale(self.roof, (self.width/2.5, self.height/2.5))
+        self.roof = pygame.transform.scale(roof, (roof.get_width()/2.5, roof.get_height()/2.5))
         self.x = x
         self.y = y
 
@@ -51,10 +55,7 @@ class Houseroof():
 
 class Obstructable():
     def __init__(self, base, x, y):
-        self.base = base
-        self.width = self.base.get_width()
-        self.height = self.base.get_height()
-        self.base = pygame.transform.scale(self.base, (self.width/2.5, self.height/2.5))
+        self.base = pygame.transform.scale(base, (base.get_width()/2.5, base.get_height()/2.5))
         self.x = x
         self.y = y
     
@@ -75,9 +76,7 @@ class Obstructable():
 class Paths():
     def __init__(self):
         self.background = pygame.image.load('images\\village\\pathsgrass.png')
-        self.width = self.background.get_width()
-        self.height = self.background.get_height()
-        self.background = pygame.transform.scale(self.background, (self.width/2.5, self.height/2.5))
+        self.background = pygame.transform.scale(self.background, (self.background.get_width()/2.5, self.background.get_height()/2.5))
         self.x = -407
         self.y = -1950
 
