@@ -2,6 +2,42 @@ import random
 import pygame
 import pygame.freetype
 
+class Prompt():
+    def __init__(self, identity):
+        self.prompt = pygame.image.load('images\\dialogue\\eprompt.png')
+        self.x = identity.x + (identity.character.get_width() / 2) - (self.prompt.get_width() / 2)
+        self.y = identity.y - self.prompt.get_height() - 8
+
+    def update(self, wdown, adown, sdown, ddown):
+        if wdown:
+            self.y += 16
+        if adown:
+            self.x += 16
+        if sdown:
+            self.y -= 16
+        if ddown:
+            self.x -= 16
+        if sdown and wdown:
+            pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                self.y -= 4
+                self.x -= 4
+            if wdown and ddown:
+                self.y -= 4
+                self.x += 4
+            if sdown and adown:
+                self.y += 4
+                self.x -= 4
+            if sdown and ddown:
+                self.y += 4
+                self.x += 4
+
+    def draw(self, surface, playerrect, npcrect):
+        if pygame.Rect.colliderect(playerrect, npcrect):
+            surface.blit(self.prompt, (self.x, self.y))
 
 class NPC():
     def __init__(self, character, identity, x, y):
@@ -192,6 +228,8 @@ class Player():
     def __init__(self):
         self.sprite = pygame.image.load('images\\player\\gloopss.png')
         self.sprite = pygame.transform.scale(self.sprite, (self.sprite.get_width()/2.5, self.sprite.get_height()/2.5))
+        self.x = 0
+        self.y = 0
     
     def update(self, wdown, adown, sdown, ddown, lastkey, walking):
         if wdown and not sdown:
@@ -236,9 +274,10 @@ class Player():
             self.sprite = pygame.image.load('images\\player\\gloopss.png')
         self.sprite = pygame.transform.scale(self.sprite, (self.sprite.get_width()/2.5, self.sprite.get_height()/2.5))
 
-
     def draw(self, surface, displayInfo):
-        surface.blit(self.sprite, (int((displayInfo.current_w/2)-(self.sprite.get_width()/2)), int((displayInfo.current_h/2)-(self.sprite.get_height()/2))))
+        self.x = int((displayInfo.current_w/2)-(self.sprite.get_width()/2))
+        self.y = int((displayInfo.current_h/2)-(self.sprite.get_height()/2))
+        surface.blit(self.sprite, (self.x, self.y))
 
 def main():
     pygame.init()
@@ -247,7 +286,9 @@ def main():
     dt = 0
     res = (1920, 1020)
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret, deity = obj_creation()
+    (player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, 
+     house3roof, rail1, rail2, tomato, markiplier, furret, deity, tomatoprompt, markprompt, 
+     furretprompt) = obj_creation()
     keydown = ""
     lastkey = ""
     wdown = False
@@ -276,9 +317,13 @@ def main():
         if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
-        upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity)
+        playerrect, tomatorect, markrect, furretrect = collisions(player, tomato, markiplier, furret)
+        upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, 
+                 house1roof, house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt)
         # Render and Display
-        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity)
+        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
+                     house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
+                     markrect, furretrect)
         pygame.display.flip()
         dt = clock.tick(24)
     pygame.mixer.music.unload()
@@ -299,11 +344,16 @@ def obj_creation():
     tomato = NPC(pygame.image.load('images\\tomato\\tomat.png'), "tomato", -199, -398)
     markiplier = NPC(pygame.image.load('images\\markiplier\\mark.png'), "mark", 2145, -1446)
     furret = NPC(pygame.image.load('images\\furret\\furret1.png'), "furret", 2401, -1062)
-    deity = NPC(pygame.image.load('images\\deity.png'), "deity", -100, -2000)
+    deity = NPC(pygame.image.load('images\\deity\\deity.png'), "deity", -100, -2000)
+    tomatoprompt = Prompt(tomato)
+    markprompt = Prompt(markiplier)
+    furretprompt = Prompt(furret)
 
-    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret, deity
+    return (player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, 
+            furret, deity, tomatoprompt, markprompt, furretprompt)
 
-def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity):
+def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
+             house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt):
     spacesea.update(wdown, adown, sdown, ddown)
     background.update(wdown, adown, sdown, ddown)
     house1base.update(wdown, adown, sdown, ddown)
@@ -319,8 +369,12 @@ def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background,
     house1roof.update(wdown, adown, sdown, ddown)
     house2roof.update(wdown, adown, sdown, ddown)
     house3roof.update(wdown, adown, sdown, ddown)
+    tomatoprompt.update(wdown, adown, sdown, ddown)
+    markprompt.update(wdown, adown, sdown, ddown)
+    furretprompt.update(wdown, adown, sdown, ddown)
 
-def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret,deity):
+def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, 
+                 house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, markrect, furretrect):
     screen.fill(black)
     spacesea.draw(screen)
     background.draw(screen)
@@ -337,6 +391,9 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     house1roof.draw(screen)
     house2roof.draw(screen)
     house3roof.draw(screen)
+    tomatoprompt.draw(screen, playerrect, tomatorect)
+    markprompt.draw(screen, playerrect, markrect)
+    furretprompt.draw(screen, playerrect, furretrect)
 
 def get_keydown(lastkey):
     pressed = pygame.key.get_pressed()
@@ -359,6 +416,14 @@ def get_keydown(lastkey):
         ddown = True
         lastkey = "d"
     return wdown, adown, sdown, ddown, lastkey
+
+def collisions(player, tomato, mark, furret):
+    playerrect = pygame.Rect(player.x+16, (player.y+291), player.sprite.get_width()-32, (player.sprite.get_height()/15))
+    tomatorect = pygame.Rect(tomato.x - 200, (tomato.y - 200), tomato.character.get_width()+400, tomato.character.get_height()+400)
+    markrect = pygame.Rect(mark.x, (mark.y + 100), mark.character.get_width(), mark.character.get_height()+80)
+    furretrect = pygame.Rect(furret.x - 100, (furret.y+50), furret.character.get_width()+100, furret.character.get_height()-10)
+
+    return playerrect, tomatorect, markrect, furretrect
 
 def start_music():
     pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
