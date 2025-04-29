@@ -247,7 +247,7 @@ def main():
     dt = 0
     res = (1920, 1020)
     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
-    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret = obj_creation()
+    player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret, deity = obj_creation()
     keydown = ""
     lastkey = ""
     wdown = False
@@ -276,9 +276,9 @@ def main():
         if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
-        upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret)
+        upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity)
         # Render and Display
-        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret)
+        draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity)
         pygame.display.flip()
         dt = clock.tick(24)
     pygame.mixer.music.unload()
@@ -296,13 +296,14 @@ def obj_creation():
     house3roof = Houseroof(pygame.image.load('images\\village\\house1roof.png'), 2009, -358)
     rail1 = Obstructable(pygame.image.load('images\\village\\rail1.png'), -399, -526)
     rail2 = Obstructable(pygame.image.load('images\\village\\rail2.png'), 2305, -526)
-    tomato = NPC(pygame.image.load('images\\tomato\\tomat.png'), "tomato", -200, -400)
+    tomato = NPC(pygame.image.load('images\\tomato\\tomat.png'), "tomato", -199, -398)
     markiplier = NPC(pygame.image.load('images\\markiplier\\mark.png'), "mark", 2145, -1446)
     furret = NPC(pygame.image.load('images\\furret\\furret1.png'), "furret", 2401, -1062)
+    deity = NPC(pygame.image.load('images\\deity.png'), "deity", -100, -2000)
 
-    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret
+    return player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, furret, deity
 
-def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret):
+def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret, deity):
     spacesea.update(wdown, adown, sdown, ddown)
     background.update(wdown, adown, sdown, ddown)
     house1base.update(wdown, adown, sdown, ddown)
@@ -313,12 +314,13 @@ def upd_code(wdown, adown, sdown, ddown, lastkey, walking, spacesea, background,
     tomato.update(wdown, adown, sdown, ddown, walking)
     markiplier.update(wdown, adown, sdown, ddown, walking)
     furret.update(wdown, adown, sdown, ddown, walking)
+    deity.update(wdown, adown, sdown, ddown, walking)
     player.update(wdown, adown, sdown, ddown, lastkey, walking)
     house1roof.update(wdown, adown, sdown, ddown)
     house2roof.update(wdown, adown, sdown, ddown)
     house3roof.update(wdown, adown, sdown, ddown)
 
-def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret):
+def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, house3roof, tomato, markiplier, furret,deity):
     screen.fill(black)
     spacesea.draw(screen)
     background.draw(screen)
@@ -330,6 +332,7 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     tomato.draw(screen)
     markiplier.draw(screen)
     furret.draw(screen)
+    deity.draw(screen)
     player.draw(screen, displayInfo)
     house1roof.draw(screen)
     house2roof.draw(screen)
