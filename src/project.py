@@ -3,53 +3,73 @@ import pygame
 import pygame.freetype
 
 class Text():
-    def __init__(self, character, x, y):
-        self.character = character
+    def __init__(self, word, x, y):
+        self.word = word
         self.x = x
         self.y = y
         self.size = 35
-        font = self.font = pygame.freetype.SysFont('balatrofontjokerregular', (self.size))
-        self.text, self.rect = font.render(self.character, (167,184,214))
+        self.font = pygame.freetype.SysFont('balatrofontjokerregular', (self.size))
+        self.text, self.rect = self.font.render(self.word, (167,184,214))
+        self.text_width = self.text.get_width()
+        self.text_height = self.text.get_height()
 
     def draw(self, surface):
         surface.blit(self.text, (self.x, self.y))
 
-
 class Dialogue():
     def __init__(self):
-        self.tomtodlg = ["*Wow it's me, Tomato Periscone.", "*I made the music for this game."]
-        self.markdlg = ["Hello everybody, my name is Markiplier, and welcome tooo my bridge.", "Watch my movie Iron Lung when it comes out."]
-        self.furretdlg = ["...", ".....", "...........", "...............", "I walk", 0, ":D"]
+        self.tomtodlg = [["*Wow ", "it's ", "me, ", "Tomato ", "Periscone."], ["*I ", "made ", "the ", "music ", "for ", "this ", "game."]]
+        self.markdlg = [["Hello ", "everybody, ", "my ", "name ", "is ", "Markiplier, ", "and ", "welcome ", "tooo ", "my ", "bridge."], 
+                        ["Watch ", "my ", "movie ", "'Iron ", "Lung '", "when ", "it ", "comes ", "out."]]
+        self.furretdlg = [["..."], ["....."], ["..........."], ["..............."], ["I ", "walk"], 0, [":D"]]
         self.tomtoitrt = 0
         self.markitrt = 0
         self.furretitrt = 0
         self.char = 0
         self.dlg = []
 
-    def update(self, speaking, surface, npc):
-        self.x = 100
-        self.y = 80
+    def update(self, speaking, npc):
+        self.x = 200
+        self.y = 640
         self.speaking = speaking
         self.npc = npc
         if self.npc == "tomato":
-            for char in self.tomtodlg[self.tomtoitrt]:
-                if self.x > 1600:
-                    self.x = 0
-                    self.y += 50
-                text = Text(char, self.x, self.y)
-                self.dlg.insert(0, text)
-                self.draw(surface)
-                self.char += 1
-                self.x += 40
-            if self.tomtoitrt<len(self.tomtodlg)-1:
+            self.dlg = []
+            for word in self.tomtodlg[self.tomtoitrt]:
+                self.word = word
+                self.update_text()
+            if self.tomtoitrt <= len(self.tomtodlg):
                 self.tomtoitrt += 1
         elif self.npc == "mark":
-            self.dlg = self.tomtodlg
+            self.dlg = []
+            for word in self.markdlg[self.markitrt]:
+                self.word = word
+                self.update_text()
+            if self.markitrt <= len(self.markdlg):
+                self.markitrt += 1
         elif self.npc == "furret":
-            self.dlg = self.tomtodlg
+            self.dlg = []
+            for word in self.furretdlg[self.furretitrt]:
+                self.word = word
+                self.update_text()
+            if self.furretitrt <= len(self.furretdlg):
+                self.furretitrt += 1
+
+    def update_text(self):
+        text = Text(self.word, self.x, self.y)
+        if self.x + text.text_width > 1600:
+            text.x = 200
+            self.x = 200
+            text.y += text.text_height + 20
+            self.y += text.text_height + 20
+        self.dlg.insert(0, text)
+        self.char += 1
+        self.x += text.text_width + 10
 
     def draw(self, surface):
         self.dlg[0].draw(surface)
+        for character in self.dlg:
+            character.draw(surface)
             
 
 class DialogueBubble():
@@ -88,9 +108,11 @@ class DialogueBubble():
             self.npc = pygame.image.load('images\\tomato\\tomat.png')
         
         elif pygame.Rect.colliderect(self.playerrect, self.markrect) and self.speaking:
+            self.specnpc = "mark"
             self.npc = pygame.image.load('images\\markiplier\\mark.png')
         
         elif pygame.Rect.colliderect(self.playerrect, self.furretrect) and self.speaking:
+            self.specnpc = "furret"
             if self.music == False:
                 pygame.mixer.music.fadeout(1000)
                 pygame.mixer.music.load('audio\\walk.mp3')
@@ -109,7 +131,8 @@ class DialogueBubble():
             surface.blit(self.npc, (int((self.dispw/2)-(self.npc.get_width()/2)), int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))))
             surface.blit(self.box, (self.x, self.y))
             if self.iterate == True:
-                self.dialogue.update(self.speaking, self.box, self.specnpc)
+                self.dialogue.update(self.speaking, self.specnpc)
+            self.dialogue.draw(surface)
 
 class Prompt():
     def __init__(self, identity):
@@ -413,18 +436,61 @@ def main():
     while running:
         # Event Loop
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
                 fullscreen = not fullscreen
+
                 if fullscreen:
                     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
                 else:
                     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                if pygame.Rect.colliderect(playerrect, tomatorect) or pygame.Rect.colliderect(playerrect, markrect) or pygame.Rect.colliderect(playerrect, furretrect):
+                print(dialogue.dialogue.furretitrt)
+                print(len(dialogue.dialogue.furretdlg))
+
+                if dialogue.dialogue.tomtoitrt >= len(dialogue.dialogue.tomtodlg):
+                    speaking = False
+                    dialogue.dialogue.tomtoitrt -= 1
+                    dialogue.music = False
+                    start_music()
+
+                elif dialogue.dialogue.markitrt >= len(dialogue.dialogue.markdlg):
+                    speaking = False
+                    dialogue.dialogue.markitrt -= 1
+
+                elif dialogue.dialogue.furretitrt >= len(dialogue.dialogue.furretdlg):
+                    speaking = False
+                    dialogue.dialogue.furretitrt -= 1
+                    dialogue.music = False
+                    start_music()
+                
+                elif dialogue.dialogue.tomtodlg[dialogue.dialogue.tomtoitrt] == 0:
+                    speaking = False
+                    dialogue.dialogue.tomtoitrt += 1
+                    dialogue.music = False
+                    start_music()
+
+                elif dialogue.dialogue.markdlg[dialogue.dialogue.markitrt] == 0:
+                    speaking = False
+                    dialogue.dialogue.markitrt += 1
+                    dialogue.music = False
+                    start_music()
+                      
+                elif dialogue.dialogue.furretdlg[dialogue.dialogue.furretitrt] == 0:
+                    speaking = False
+                    dialogue.dialogue.furretitrt += 1
+                    dialogue.music = False
+                    start_music()
+
+                elif pygame.Rect.colliderect(playerrect, tomatorect) or pygame.Rect.colliderect(playerrect, markrect) or pygame.Rect.colliderect(playerrect, furretrect):
                     iterate = True
                     speaking = True
+
         wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey, speaking)
         # Game Logic
         walking += 1
@@ -548,9 +614,14 @@ def collisions(player, tomato, mark, furret):
     return playerrect, tomatorect, markrect, furretrect
 
 def start_music():
-    pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
-    pygame.mixer.music.set_volume(0.5)
-    pygame.mixer.music.play(-1)
+    if pygame.mixer.music.get_busy:
+        pygame.mixer.music.fadeout(1000)
+        pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
+        pygame.mixer.music.play(-1)
+    else:
+        pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
 
 if __name__ == "__main__":
     main()
