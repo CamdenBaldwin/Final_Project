@@ -7,9 +7,9 @@ class Text():
         self.character = character
         self.x = x
         self.y = y
-        self.size = 20
+        self.size = 35
         font = self.font = pygame.freetype.SysFont('balatrofontjokerregular', (self.size))
-        self.text, rect = font.render(self.character, (167,184,214))
+        self.text, self.rect = font.render(self.character, (167,184,214))
 
     def draw(self, surface):
         surface.blit(self.text, (self.x, self.y))
@@ -17,7 +17,7 @@ class Text():
 
 class Dialogue():
     def __init__(self):
-        self.tomtodlg = ["Wow it's me, Tomato Periscone.", "I made the music for this game."]
+        self.tomtodlg = ["*Wow it's me, Tomato Periscone.", "*I made the music for this game."]
         self.markdlg = ["Hello everybody, my name is Markiplier, and welcome tooo my bridge.", "Watch my movie Iron Lung when it comes out."]
         self.furretdlg = ["...", ".....", "...........", "...............", "I walk", 0, ":D"]
         self.tomtoitrt = 0
@@ -27,29 +27,29 @@ class Dialogue():
         self.dlg = []
 
     def update(self, speaking, surface, npc):
-        self.x = 0
-        self.y = 0
+        self.x = 100
+        self.y = 80
         self.speaking = speaking
         self.npc = npc
         if self.npc == "tomato":
             for char in self.tomtodlg[self.tomtoitrt]:
-                print(char)
-                if self.x > 1800:
+                if self.x > 1600:
                     self.x = 0
                     self.y += 50
                 text = Text(char, self.x, self.y)
-                self.dlg.insert(-1, text)
+                self.dlg.insert(0, text)
                 self.draw(surface)
                 self.char += 1
-                self.x += 1
-            self.tomtoitrt += 1
+                self.x += 40
+            if self.tomtoitrt<len(self.tomtodlg)-1:
+                self.tomtoitrt += 1
         elif self.npc == "mark":
             self.dlg = self.tomtodlg
         elif self.npc == "furret":
             self.dlg = self.tomtodlg
 
     def draw(self, surface):
-        self.dlg[self.char].draw(surface)
+        self.dlg[0].draw(surface)
             
 
 class DialogueBubble():
