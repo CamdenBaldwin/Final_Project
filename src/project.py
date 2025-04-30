@@ -148,7 +148,7 @@ class NPC():
             if sdown and ddown:
                 self.y += 4
                 self.x += 4
-        
+            
     def draw(self, surface):
         surface.blit(self.character, (self.x, self.y))
 
@@ -196,7 +196,7 @@ class Houseroof():
         self.x = x
         self.y = y
 
-    def update(self, wdown, adown, sdown, ddown):
+    def update(self, wdown, adown, sdown, ddown): 
         if wdown:
             self.y += 16
         if adown:
@@ -371,7 +371,6 @@ def main():
     furretrect = pygame.Rect(0, 0, 0, 0)
     iterate = False
     speaking = False
-    keydown = ""
     lastkey = ""
     black = (0,0,0)
     walking = 0
@@ -393,7 +392,7 @@ def main():
                 if pygame.Rect.colliderect(playerrect, tomatorect) or pygame.Rect.colliderect(playerrect, markrect) or pygame.Rect.colliderect(playerrect, furretrect):
                     iterate = True
                     speaking = True
-        wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey)
+        wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey, speaking)
         # Game Logic
         walking += 1
         if walking >= 25:
@@ -484,7 +483,7 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     furretprompt.draw(screen, playerrect, furretrect)
     dialogue.draw(screen)
 
-def get_keydown(lastkey):
+def get_keydown(lastkey, speaking):
     pressed = pygame.key.get_pressed()
     keydown=""
     lastkey = lastkey
@@ -492,18 +491,19 @@ def get_keydown(lastkey):
     adown = False
     sdown = False
     ddown = False
-    if pressed[pygame.K_w]:
-        wdown = True
-        lastkey = "w"
-    if pressed[pygame.K_a]:
-        adown = True
-        lastkey = "a"
-    if pressed[pygame.K_s]:
-        sdown = True
-        lastkey = "s"
-    if pressed[pygame.K_d]:
-        ddown = True
-        lastkey = "d"
+    if not speaking:
+        if pressed[pygame.K_w]:
+            wdown = True
+            lastkey = "w"
+        if pressed[pygame.K_a]:
+            adown = True
+            lastkey = "a"
+        if pressed[pygame.K_s]:
+            sdown = True
+            lastkey = "s"
+        if pressed[pygame.K_d]:
+            ddown = True
+            lastkey = "d"
     return wdown, adown, sdown, ddown, lastkey
 
 def collisions(player, tomato, mark, furret):
