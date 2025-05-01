@@ -30,7 +30,7 @@ class Dialogue():
 
     def update(self, speaking, npc):
         self.x = 200
-        self.y = 640
+        self.y = 670
         self.speaking = speaking
         self.npc = npc
         if self.npc == "tomato":
@@ -70,12 +70,13 @@ class Dialogue():
         self.dlg[0].draw(surface)
         for character in self.dlg:
             character.draw(surface)
-            
-
+           
 class DialogueBubble():
     def __init__(self):
         self.box = pygame.image.load('images\\dialogue\\dialoguebubble.png')
         self.img_ratio = self.box.get_width()/self.box.get_height()
+        self.button = pygame.image.load('images\\dialogue\\ebutton.png')
+        self.button = pygame.transform.scale_by(self.button, 2)
         self.x = 0
         self.y = 0
         self.music = False
@@ -130,6 +131,7 @@ class DialogueBubble():
             surface.blit(self.bgsurf, (0, 0))
             surface.blit(self.npc, (int((self.dispw/2)-(self.npc.get_width()/2)), int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))))
             surface.blit(self.box, (self.x, self.y))
+            surface.blit(self.button, (1696, 798))
             if self.iterate == True:
                 self.dialogue.update(self.speaking, self.specnpc)
             self.dialogue.draw(surface)
@@ -140,7 +142,8 @@ class Prompt():
         self.x = identity.x + (identity.character.get_width() / 2) - (self.prompt.get_width() / 2)
         self.y = identity.y - self.prompt.get_height() - 8
 
-    def update(self, wdown, adown, sdown, ddown):
+    def update(self, wdown, adown, sdown, ddown, speaking):
+        self.speaking = speaking
         if wdown:
             self.y += 16
         if adown:
@@ -168,7 +171,7 @@ class Prompt():
                 self.x += 4
 
     def draw(self, surface, playerrect, npcrect):
-        if pygame.Rect.colliderect(playerrect, npcrect):
+        if pygame.Rect.colliderect(playerrect, npcrect) and not self.speaking:
             surface.blit(self.prompt, (self.x, self.y))
 
 class NPC():
@@ -553,9 +556,9 @@ def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking,
     house1roof.update(wdown, adown, sdown, ddown)
     house2roof.update(wdown, adown, sdown, ddown)
     house3roof.update(wdown, adown, sdown, ddown)
-    tomatoprompt.update(wdown, adown, sdown, ddown)
-    markprompt.update(wdown, adown, sdown, ddown)
-    furretprompt.update(wdown, adown, sdown, ddown)
+    tomatoprompt.update(wdown, adown, sdown, ddown, speaking)
+    markprompt.update(wdown, adown, sdown, ddown, speaking)
+    furretprompt.update(wdown, adown, sdown, ddown, speaking)
     dialogue.update(playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate)
 
 def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, 
