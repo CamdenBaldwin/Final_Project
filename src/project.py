@@ -18,7 +18,9 @@ class Text():
 
 class Dialogue():
     def __init__(self):
-        self.tomtodlg = [["*Wow ", "it's ", "me, ", "Tomato ", "Periscone."], ["*I ", "made ", "the ", "music ", "for ", "this ", "game."]]
+        self.tomtodlg = [["*i ", "am ", "john ", "deltarune"], ["*ur ", "ur ", "ur ", "ur ", "ur ", "ur ", "ur"], 0 , 
+                         ["*ur ", "ur ", "ur ", "ur ", "ur ", "ur ", "ur"], ["*john ", "deltarune"], 0, ["*SOMEBODY, ", "STOP ", "ME!!!"], 
+                         ["*I'M ", "SMOKING ", "THE ", "TRACK!!!!!!!"], ["*I'LL ", "GIGGITY ", "LOIS... "], ["*AND ", "MAKE ", "MORE ", "SONS ", "OF ", "THE ", "MASK!!!!!!!!!!"]]
         self.markdlg = [["Hello ", "everybody, ", "my ", "name ", "is ", "Markiplier, ", "and ", "welcome ", "tooo ", "my ", "bridge."], 
                         ["Watch ", "my ", "movie ", "'Iron ", "Lung '", "when ", "it ", "comes ", "out."]]
         self.furretdlg = [["..."], ["....."], ["..........."], ["..............."], ["I ", "walk"], 0, [":D"]]
@@ -77,13 +79,13 @@ class DialogueBubble():
         self.img_ratio = self.box.get_width()/self.box.get_height()
         self.button = pygame.image.load('images\\dialogue\\ebutton.png')
         self.button = pygame.transform.scale_by(self.button, 2)
-        self.x = 0
-        self.y = 0
+        self.boxx = 0
+        self.boxy = 0
         self.music = False
         self.fade = (0, 0, 0, 200)
         self.dialogue = Dialogue()
         
-    def update(self, playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate):
+    def update(self, playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate, tomatolvl):
         self.bgsurf = pygame.Surface((displayInfo.current_w, displayInfo.current_h), pygame.SRCALPHA)
         self.playerrect = playerrect
         self.tomatorect = tomatorect
@@ -96,27 +98,46 @@ class DialogueBubble():
         self.disph = displayInfo.current_h
         self.w = displayInfo.current_w - (displayInfo.current_w/10)
         self.box = pygame.transform.scale(self.box, (self.w, self.w/self.img_ratio))
-        self.x = int((self.dispw/2)-(self.box.get_width()/2))
-        self.y = int((self.disph/10*9)-(self.box.get_height()))
+        self.boxx = int((self.dispw/2)-(self.box.get_width()/2))
+        self.boxy = int((self.disph/10*9)-(self.box.get_height()))
 
         if pygame.Rect.colliderect(self.playerrect, self.tomatorect) and self.speaking:
             self.specnpc = "tomato"
             if self.music == False:
                 pygame.mixer.music.fadeout(1000)
-                pygame.mixer.music.load('audio\\tomton.mp3')
+                if tomatolvl <= 1:
+                    pygame.mixer.music.load('audio\\tomton.mp3')
+                elif tomatolvl > 1:
+                    pygame.mixer.music.load('audio\\tomtoneo.mp3')
+                pygame.mixer.music.set_volume(0.5)
                 pygame.mixer.music.play(-1)
                 self.music = True
-            self.npc = pygame.image.load('images\\tomato\\tomat.png')
+            if tomatolvl < 1:
+                self.npc = pygame.image.load('images\\tomato\\tomat.png')
+                self.npcx = int((self.dispw/2)-(self.npc.get_width()/2)) 
+                self.npcy = int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))
+            elif tomatolvl == 1:
+                self.npc = pygame.image.load('images\\tomato\\tomto.png')
+                self.npcx = int((self.dispw/2)-(self.npc.get_width()/2)) 
+                self.npcy = int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))
+            else:
+                self.npc = pygame.image.load('images\\tomato\\tomtonneo.png')
+                self.npc = pygame.transform.scale(self.npc, (self.npc.get_width()/2.5, self.npc.get_height()/2.5))
+                self.npcx = int((self.dispw/2)-(self.npc.get_width()/2)) 
+                self.npcy = int((self.disph/2-(self.disph/10*5))-(self.npc.get_height()/2))
         
         elif pygame.Rect.colliderect(self.playerrect, self.markrect) and self.speaking:
             self.specnpc = "mark"
             self.npc = pygame.image.load('images\\markiplier\\mark.png')
+            self.npcx = int((self.dispw/2)-(self.npc.get_width()/2)) 
+            self.npcy = int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))
         
         elif pygame.Rect.colliderect(self.playerrect, self.furretrect) and self.speaking:
             self.specnpc = "furret"
             if self.music == False:
                 pygame.mixer.music.fadeout(1000)
                 pygame.mixer.music.load('audio\\walk.mp3')
+                pygame.mixer.music.set_volume(0.5)
                 pygame.mixer.music.play(-1)
                 self.music = True
             if walking <= 12: 
@@ -129,8 +150,8 @@ class DialogueBubble():
              and self.speaking) or (pygame.Rect.colliderect(self.playerrect, self.furretrect) and self.speaking)):
             pygame.draw.rect(self.bgsurf, self.fade, self.bgsurf.get_rect())
             surface.blit(self.bgsurf, (0, 0))
-            surface.blit(self.npc, (int((self.dispw/2)-(self.npc.get_width()/2)), int((self.disph/2-(self.disph/10))-(self.npc.get_height()/2))))
-            surface.blit(self.box, (self.x, self.y))
+            surface.blit(self.npc, (self.npcx, self.npcy))
+            surface.blit(self.box, (self.boxx, self.boxy))
             surface.blit(self.button, (1696, 798))
             if self.iterate == True:
                 self.dialogue.update(self.speaking, self.specnpc)
@@ -141,8 +162,10 @@ class Prompt():
         self.prompt = pygame.image.load('images\\dialogue\\eprompt.png')
         self.x = identity.x + (identity.character.get_width() / 2) - (self.prompt.get_width() / 2)
         self.y = identity.y - self.prompt.get_height() - 8
+        self.beendone1 = False
+        self.beendone2 = False
 
-    def update(self, wdown, adown, sdown, ddown, speaking):
+    def update(self, wdown, adown, sdown, ddown, speaking, id="", tomatolvl = 0):
         self.speaking = speaking
         if wdown:
             self.y += 16
@@ -170,6 +193,14 @@ class Prompt():
                 self.y += 4
                 self.x += 4
 
+        if id == "tomato":
+            if tomatolvl == 1 and not self.beendone1:
+                self.y -= 96
+                self.beendone1 = True
+            elif tomatolvl > 1 and not self.beendone2:
+                self.y -= 250
+                self.beendone2 = True
+
     def draw(self, surface, playerrect, npcrect):
         if pygame.Rect.colliderect(playerrect, npcrect) and not self.speaking:
             surface.blit(self.prompt, (self.x, self.y))
@@ -180,8 +211,10 @@ class NPC():
         self.identifier = identity
         self.x = x
         self.y = y
+        self.beendone1 = False
+        self.beendone2 = False
 
-    def update(self, wdown, adown, sdown, ddown):
+    def update(self, wdown, adown, sdown, ddown, id="", tomatolvl=0):
         if wdown:
             self.y += 16
         if adown:
@@ -207,6 +240,22 @@ class NPC():
             if sdown and ddown:
                 self.y += 4
                 self.x += 4
+        
+        if id == "tomato":
+            if tomatolvl == 1 and not self.beendone1:
+                self.tomto = pygame.image.load('images\\tomato\\tomto.png')
+                self.tomto = pygame.transform.scale(self.tomto, (self.tomto.get_width()/2.5, self.tomto.get_height()/2.5))
+                self.x -= self.tomto.get_width()//2 - self.character.get_width()//2 + 2
+                self.y -= self.tomto.get_height() - self.character.get_height() - 16
+                self.character = self.tomto
+                self.beendone1 = True
+            elif tomatolvl > 1 and not self.beendone2:
+                self.tomtonneo = pygame.image.load('images\\tomato\\tomtonneo.png')
+                self.tomtonneo = pygame.transform.scale(self.tomtonneo, (self.tomtonneo.get_width()/4, self.tomtonneo.get_height()/4))
+                self.x -= self.tomtonneo.get_width()//2 - self.character.get_width()//2 + 20
+                self.y -= self.tomtonneo.get_height()//10*8 + 10
+                self.character = self.tomtonneo
+                self.beendone2 = True
             
     def draw(self, surface):
         surface.blit(self.character, (self.x, self.y))
@@ -433,6 +482,8 @@ def main():
     lastkey = ""
     black = (0,0,0)
     walking = 0
+    tomatolvl = 0
+    armed = False
     start_music()
     running = True
     fullscreen = False
@@ -453,8 +504,6 @@ def main():
                     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                print(dialogue.dialogue.furretitrt)
-                print(len(dialogue.dialogue.furretdlg))
 
                 if dialogue.dialogue.tomtoitrt >= len(dialogue.dialogue.tomtodlg):
                     speaking = False
@@ -477,6 +526,7 @@ def main():
                     dialogue.dialogue.tomtoitrt += 1
                     dialogue.music = False
                     start_music()
+                    armed = True
 
                 elif dialogue.dialogue.markdlg[dialogue.dialogue.markitrt] == 0:
                     speaking = False
@@ -493,6 +543,9 @@ def main():
                 elif pygame.Rect.colliderect(playerrect, tomatorect) or pygame.Rect.colliderect(playerrect, markrect) or pygame.Rect.colliderect(playerrect, furretrect):
                     iterate = True
                     speaking = True
+                    if armed == True:
+                        tomatolvl += 1
+                        armed = False
 
         wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey, speaking)
         # Game Logic
@@ -503,7 +556,7 @@ def main():
         playerrect, tomatorect, markrect, furretrect = collisions(player, tomato, markiplier, furret)
         upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, 
                  house1roof, house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
-                     markrect, furretrect, dialogue, speaking)
+                     markrect, furretrect, dialogue, speaking, tomatolvl)
         # Render and Display
         draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
                      house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
@@ -540,7 +593,7 @@ def obj_creation():
 
 def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
              house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, markrect, furretrect, 
-             dialogue, speaking):
+             dialogue, speaking, tomatolvl):
     spacesea.update(wdown, adown, sdown, ddown)
     background.update(wdown, adown, sdown, ddown)
     house1base.update(wdown, adown, sdown, ddown)
@@ -548,7 +601,7 @@ def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking,
     house3base.update(wdown, adown, sdown, ddown)
     rail1.update(wdown, adown, sdown, ddown)
     rail2.update(wdown, adown, sdown, ddown)
-    tomato.update(wdown, adown, sdown, ddown)
+    tomato.update(wdown, adown, sdown, ddown, "tomato", tomatolvl)
     markiplier.update(wdown, adown, sdown, ddown)
     furret.update(wdown, adown, sdown, ddown)
     deity.update(wdown, adown, sdown, ddown)
@@ -556,10 +609,10 @@ def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking,
     house1roof.update(wdown, adown, sdown, ddown)
     house2roof.update(wdown, adown, sdown, ddown)
     house3roof.update(wdown, adown, sdown, ddown)
-    tomatoprompt.update(wdown, adown, sdown, ddown, speaking)
+    tomatoprompt.update(wdown, adown, sdown, ddown, speaking, "tomato", tomatolvl)
     markprompt.update(wdown, adown, sdown, ddown, speaking)
     furretprompt.update(wdown, adown, sdown, ddown, speaking)
-    dialogue.update(playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate)
+    dialogue.update(playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate, tomatolvl)
 
 def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, 
                  house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, markrect, furretrect, 
