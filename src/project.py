@@ -165,33 +165,8 @@ class Prompt():
         self.beendone1 = False
         self.beendone2 = False
 
-    def update(self, wdown, adown, sdown, ddown, speaking, id="", tomatolvl = 0):
-        self.speaking = speaking
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, speaking, directcollis, id="", tomatolvl = 0):
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
 
         if id == "tomato":
             if tomatolvl == 1 and not self.beendone1:
@@ -214,32 +189,8 @@ class NPC():
         self.beendone1 = False
         self.beendone2 = False
 
-    def update(self, wdown, adown, sdown, ddown, id="", tomatolvl=0):
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, directcollis, id="", tomatolvl=0):
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
         
         if id == "tomato":
             if tomatolvl == 1 and not self.beendone1:
@@ -268,32 +219,8 @@ class Spacesea():
         self.x = -631
         self.y = -2054
 
-    def update(self, wdown, adown, sdown, ddown):
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, directcollis):
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
 
     def draw(self, surface):
         surface.blit(self.sea, (self.x, self.y))
@@ -304,32 +231,8 @@ class Houseroof():
         self.x = x
         self.y = y
 
-    def update(self, wdown, adown, sdown, ddown): 
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, directcollis): 
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
 
     def draw(self, surface):
         surface.blit(self.roof, (self.x, self.y))
@@ -340,32 +243,8 @@ class Obstructable():
         self.x = x
         self.y = y
     
-    def update(self, wdown, adown, sdown, ddown):
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, directcollis):
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
 
     def draw(self, surface):
         surface.blit(self.base, (self.x, self.y))
@@ -377,32 +256,8 @@ class Paths():
         self.x = -407
         self.y = -1950
 
-    def update(self, wdown, adown, sdown, ddown):
-        if wdown:
-            self.y += 16
-        if adown:
-            self.x += 16
-        if sdown:
-            self.y -= 16
-        if ddown:
-            self.x -= 16
-        if sdown and wdown:
-            pass
-        elif ddown and adown: 
-            pass
-        else:
-            if wdown and adown:
-                self.y -= 4
-                self.x -= 4
-            if wdown and ddown:
-                self.y -= 4
-                self.x += 4
-            if sdown and adown:
-                self.y += 4
-                self.x -= 4
-            if sdown and ddown:
-                self.y += 4
-                self.x += 4
+    def update(self, wdown, adown, sdown, ddown, directcollis):
+        self.x, self.y = upd_pos(self.x, self.y, directcollis, wdown, adown, sdown, ddown)
 
     def draw(self, surface):
         surface.blit(self.background, (self.x, self.y))
@@ -473,10 +328,12 @@ def main():
     (player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, 
      house3roof, rail1, rail2, tomato, markiplier, furret, deity, tomatoprompt, markprompt, 
      furretprompt, dialogue) = obj_creation()
-    playerrect = pygame.Rect(0, 0, 0, 0)
+    playerrectcollis = pygame.Rect(0, 0, 0, 0)
     tomatorect = pygame.Rect(0, 0, 0, 0)
     markrect = pygame.Rect(0, 0, 0, 0)
     furretrect = pygame.Rect(0, 0, 0, 0)
+    playerrectcollis = pygame.Rect(0, 0, 0, 0)
+    collisions = []
     iterate = False
     speaking = False
     lastkey = ""
@@ -540,26 +397,26 @@ def main():
                     dialogue.music = False
                     start_music()
 
-                elif pygame.Rect.colliderect(playerrect, tomatorect) or pygame.Rect.colliderect(playerrect, markrect) or pygame.Rect.colliderect(playerrect, furretrect):
+                elif pygame.Rect.colliderect(playerrectcollis, tomatorect) or pygame.Rect.colliderect(playerrectcollis, markrect) or pygame.Rect.colliderect(playerrectcollis, furretrect):
                     iterate = True
                     speaking = True
                     if armed == True:
                         tomatolvl += 1
                         armed = False
 
-        wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey, speaking)
         # Game Logic
         walking += 1
         if walking >= 25:
             walking = 0
         displayInfo = pygame.display.Info()
-        playerrect, tomatorect, markrect, furretrect = collisions(player, tomato, markiplier, furret)
+        wdown, adown, sdown, ddown, lastkey, directcollis = get_keydown(lastkey, speaking, playerrectcollis, collisions)
+        playerrectcollis, tomatorect, markrect, furretrect, collisions = rects(player, tomato, markiplier, furret, house1base)
         upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, 
-                 house1roof, house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
-                     markrect, furretrect, dialogue, speaking, tomatolvl)
+                 house1roof, house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrectcollis, tomatorect, 
+                     markrect, furretrect, dialogue, speaking, tomatolvl, directcollis)
         # Render and Display
         draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
-                     house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
+                     house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrectcollis, tomatorect, 
                      markrect, furretrect, dialogue)
         iterate = False
         pygame.display.flip()
@@ -593,26 +450,61 @@ def obj_creation():
 
 def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
              house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, markrect, furretrect, 
-             dialogue, speaking, tomatolvl):
-    spacesea.update(wdown, adown, sdown, ddown)
-    background.update(wdown, adown, sdown, ddown)
-    house1base.update(wdown, adown, sdown, ddown)
-    house2base.update(wdown, adown, sdown, ddown)
-    house3base.update(wdown, adown, sdown, ddown)
-    rail1.update(wdown, adown, sdown, ddown)
-    rail2.update(wdown, adown, sdown, ddown)
-    tomato.update(wdown, adown, sdown, ddown, "tomato", tomatolvl)
-    markiplier.update(wdown, adown, sdown, ddown)
-    furret.update(wdown, adown, sdown, ddown)
-    deity.update(wdown, adown, sdown, ddown)
+             dialogue, speaking, tomatolvl, directcollis):
+    spacesea.update(wdown, adown, sdown, ddown, directcollis)
+    background.update(wdown, adown, sdown, ddown, directcollis)
+    house1base.update(wdown, adown, sdown, ddown, directcollis)
+    house2base.update(wdown, adown, sdown, ddown, directcollis)
+    house3base.update(wdown, adown, sdown, ddown, directcollis)
+    rail1.update(wdown, adown, sdown, ddown, directcollis)
+    rail2.update(wdown, adown, sdown, ddown, directcollis)
+    tomato.update(wdown, adown, sdown, ddown, directcollis, "tomato", tomatolvl)
+    markiplier.update(wdown, adown, sdown, ddown, directcollis)
+    furret.update(wdown, adown, sdown, ddown, directcollis)
+    deity.update(wdown, adown, sdown, ddown, directcollis)
     player.update(wdown, adown, sdown, ddown, lastkey, walking)
-    house1roof.update(wdown, adown, sdown, ddown)
-    house2roof.update(wdown, adown, sdown, ddown)
-    house3roof.update(wdown, adown, sdown, ddown)
-    tomatoprompt.update(wdown, adown, sdown, ddown, speaking, "tomato", tomatolvl)
-    markprompt.update(wdown, adown, sdown, ddown, speaking)
-    furretprompt.update(wdown, adown, sdown, ddown, speaking)
+    house1roof.update(wdown, adown, sdown, ddown, directcollis)
+    house2roof.update(wdown, adown, sdown, ddown, directcollis)
+    house3roof.update(wdown, adown, sdown, ddown, directcollis)
+    tomatoprompt.update(wdown, adown, sdown, ddown, speaking, directcollis, "tomato", tomatolvl)
+    markprompt.update(wdown, adown, sdown, ddown, speaking, directcollis)
+    furretprompt.update(wdown, adown, sdown, ddown, speaking, directcollis)
     dialogue.update(playerrect, tomatorect, markrect, furretrect, speaking, displayInfo, walking, iterate, tomatolvl)
+
+def upd_pos(x, y, directcollis, wdown, adown, sdown, ddown):
+    collis = False
+    for collis in directcollis:
+        if collis == 1:
+            collis = True
+
+    if wdown:
+        y += 16
+    if adown:
+        x += 16
+    if sdown:
+        y -= 16
+    if ddown:
+        x -= 16
+    if not collis:
+        if sdown and wdown:
+            pass
+        elif ddown and adown: 
+            pass
+        else:
+            if wdown and adown:
+                y -= 4
+                x -= 4
+            if wdown and ddown:
+                y -= 4
+                x += 4
+            if sdown and adown:
+                y += 4
+                x -= 4
+            if sdown and ddown:
+                y += 4
+                x += 4
+        
+    return x, y
 
 def draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, house2roof, 
                  house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, markrect, furretrect, 
@@ -638,45 +530,105 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     furretprompt.draw(screen, playerrect, furretrect)
     dialogue.draw(screen)
 
-def get_keydown(lastkey, speaking):
+def get_keydown(lastkey, speaking, playerrectcollis, collisions):
     pressed = pygame.key.get_pressed()
-    keydown=""
     lastkey = lastkey
     wdown = False
     adown = False
     sdown = False
     ddown = False
+    colliding = False
+    contcolliding = False
+    directcollis = [0, 0, 0, 0] # w a s d
     if not speaking:
         if pressed[pygame.K_w]:
-            wdown = True
-            lastkey = "w"
+            colliding = False
+            for possiblecollis in collisions:
+                if pygame.Rect.colliderect(playerrectcollis, possiblecollis):
+                    colliding = True
+            if colliding:
+                sdown = True
+                lastkey = "s"
+                directcollis[0] = 1
+            else:
+                wdown = True
+                lastkey = "w"
         if pressed[pygame.K_a]:
-            adown = True
-            lastkey = "a"
+            colliding = False
+            for possiblecollis in collisions:
+                if pygame.Rect.colliderect(playerrectcollis, possiblecollis):
+                    colliding = True
+            if colliding:
+                ddown = True
+                lastkey = "d"
+                directcollis[1] = 1
+            else:
+                adown = True
+                lastkey = "a"
         if pressed[pygame.K_s]:
-            sdown = True
-            lastkey = "s"
+            colliding = False
+            for possiblecollis in collisions:
+                if pygame.Rect.colliderect(playerrectcollis, possiblecollis):
+                    colliding = True
+            if colliding:
+                wdown = True
+                lastkey = "w"
+                directcollis[2] = 1
+            else:
+                sdown = True
+                lastkey = "s"
         if pressed[pygame.K_d]:
-            ddown = True
-            lastkey = "d"
-    return wdown, adown, sdown, ddown, lastkey
+            colliding = False
+            for possiblecollis in collisions:
+                if pygame.Rect.colliderect(playerrectcollis, possiblecollis):
+                    colliding = True
+            if colliding:
+                adown = True
+                lastkey = "a"
+                directcollis[3] = 1
+            else:
+                ddown = True
+                lastkey = "d"
+        for possiblecollis in collisions:
+            if pygame.Rect.colliderect(playerrectcollis, possiblecollis):
+                contcolliding = True 
+        if contcolliding:
+            if lastkey == "w":
+                lastkey = "s"
+                directcollis[0] = 1
+            elif lastkey == "a":
+                lastkey = "d"
+                directcollis[1] = 1
+            elif lastkey == "s":
+                lastkey = "w"
+                directcollis[2] = 1
+            elif lastkey == "d":
+                lastkey = "a"
+                directcollis[3] = 1
+                
+    return wdown, adown, sdown, ddown, lastkey, directcollis
 
-def collisions(player, tomato, mark, furret):
-    playerrect = pygame.Rect(player.x+16, (player.y+291), player.sprite.get_width()-32, (player.sprite.get_height()/15))
-    tomatorect = pygame.Rect(tomato.x - 200, (tomato.y - 200), tomato.character.get_width()+400, tomato.character.get_height()+400)
-    markrect = pygame.Rect(mark.x, (mark.y + 100), mark.character.get_width(), mark.character.get_height()+80)
-    furretrect = pygame.Rect(furret.x - 100, (furret.y+50), furret.character.get_width()+100, furret.character.get_height()-10)
+def rects(player, tomato, mark, furret, house1):
+    collisions = []
+    playerrectcollis = pygame.Rect(player.x+16, player.y+291, player.sprite.get_width()-32, (player.sprite.get_height()/15))
+    tomatorect = pygame.Rect(tomato.x - 200, tomato.y - 200, tomato.character.get_width()+400, tomato.character.get_height()+400)
+    markrect = pygame.Rect(mark.x, mark.y + 100, mark.character.get_width(), mark.character.get_height()+80)
+    furretrect = pygame.Rect(furret.x - 100, furret.y + 50, furret.character.get_width()+100, furret.character.get_height()-10)
+    
+    house1collis = pygame.Rect(house1.x, house1.y, house1.base.get_width(), house1.base.get_height())
+    collisions.insert(0, house1collis)
 
-    return playerrect, tomatorect, markrect, furretrect
+    return playerrectcollis, tomatorect, markrect, furretrect, collisions
 
 def start_music():
     if pygame.mixer.music.get_busy:
         pygame.mixer.music.fadeout(1000)
+        pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
         pygame.mixer.music.play(-1)
     else:
         pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play(-1)
 
 if __name__ == "__main__":
