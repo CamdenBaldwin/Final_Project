@@ -361,7 +361,7 @@ def main():
     (player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, 
      house3roof, rail1, rail2, tomato, markiplier, furret, deity, tomatoprompt, markprompt, 
      furretprompt, dialogue) = obj_creation()
-    (playerrect, tomatorectobj, markrectobj, furretrectobj, collisions) = rect_creation()
+    (playerx, playery, playerw, playerh, playerrect, tomatorectobj, markrectobj, furretrectobj, collisions) = rect_creation()
     iterate = False
     speaking = False
     lastkey = ""
@@ -384,9 +384,13 @@ def main():
 
                 if fullscreen:
                     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+                    playery = 672
+                    playerrect = pygame.Rect(playerx, playery, playerw, playerh)
 
                 else:
                     screen = pygame.display.set_mode(res, pygame.RESIZABLE)
+                    playery = 642
+                    playerrect = pygame.Rect(playerx, playery, playerw, playerh)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
 
@@ -438,7 +442,8 @@ def main():
             walking = 0
         displayInfo = pygame.display.Info()
         wdown, adown, sdown, ddown, lastkey = get_keydown(lastkey, speaking)
-        playerrect, tomatorect, markrect, furretrect, colliding, wdown, adown, sdown, ddown = upd_rects(wdown, adown, sdown, ddown, playerrect, tomatorectobj, markrectobj, furretrectobj, collisions)
+        playerrect, tomatorect, markrect, furretrect, wdown, adown, sdown, ddown = upd_rects(wdown, adown, sdown, ddown, playerrect, tomatorectobj, markrectobj, 
+                                                                                             furretrectobj, collisions, playerx, playery, playerw, playerh)
         upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, 
                  house1roof, house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
                      markrect, furretrect, dialogue, speaking, tomatolvl)
@@ -446,12 +451,6 @@ def main():
         draw_objects(screen, black, displayInfo, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
                      house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrect, tomatorect, 
                      markrect, furretrect, dialogue)
-        pygame.draw.rect(screen, (255, 0, 0), playerrect, 1)
-        pygame.draw.rect(screen, (255, 0, 0), tomatorect, 1)
-        pygame.draw.rect(screen, (255, 0, 0), markrect, 1)
-        pygame.draw.rect(screen, (255, 0, 0), furretrect, 1)
-        for object in collisions:
-            pygame.draw.rect(screen, (255, 0, 0), object.rectangle, 1)
         iterate = False
         pygame.display.flip()
         dt = clock.tick(24)
@@ -479,13 +478,22 @@ def obj_creation():
     furretprompt = Prompt(furret)
     dialogue = DialogueBubble()
 
+    print(rail1.base.get_width(), rail1.base.get_height())
+    print(rail2.base.get_width(), rail2.base.get_height())
+    print(markiplier.character.get_width(), markiplier.character.get_height())
+    print(furret.character.get_width(), furret.character.get_height())
+    print(tomato.character.get_width(), tomato.character.get_height())
+
     return (player, background, spacesea, house1base, house2base, house3base, house1roof, house2roof, house3roof, rail1, rail2, tomato, markiplier, 
             furret, deity, tomatoprompt, markprompt, furretprompt, dialogue)
 
 def rect_creation():
     collisions = []
-
-    playerrectcollis = pygame.Rect(876, 642, 168, 21)
+    playerx = 876
+    playery = 642
+    playerw = 168
+    playerh = 21
+    playerrectcollis = pygame.Rect(playerx, playery, playerw, playerh)
     tomatorect = Rectangle(-399, -598, 533, 513)
     markrect = Rectangle(2145, -1346, 128, 288)
     furretrect = Rectangle(2301, -1012, 330, 142)
@@ -496,8 +504,38 @@ def rect_creation():
     collisions.insert(0, house2collis)
     house3collis = Rectangle(2033, -150, 744, 672)
     collisions.insert(0, house3collis)
+    rail1collis = Rectangle(-399, -526, 2512, 104)
+    collisions.insert(0, rail1collis)
+    rail2collis = Rectangle(2305, -526, 720, 104)
+    collisions.insert(0, rail2collis)
+    tomatocollis = Rectangle(-199, -398, 133, 113)
+    collisions.insert(0, tomatocollis)
+    markcollis = Rectangle(2145, -1446, 128, 208)
+    collisions.insert(0, markcollis)
+    furretcollis = Rectangle(2401, -1062, 230, 152)
+    collisions.insert(0, furretcollis)
+    leftwall = Rectangle(-219, -423, 20, 1573)
+    collisions.insert(0, leftwall)
+    bottomwall = Rectangle(-219, 1130, 3064, 20)
+    collisions.insert(0, bottomwall)
+    rightwall = Rectangle(2825, -423, 20, 1573)
+    collisions.insert(0, rightwall)
+    dock1 = Rectangle(1849, -870, 264, 345)
+    collisions.insert(0, dock1)
+    dock2 = Rectangle(2305, -870, 264, 345)
+    collisions.insert(0, dock2)
+    dock3 = Rectangle(1829, -1070, 20, 250)
+    collisions.insert(0, dock3)
+    dock4 = Rectangle(2569, -1070, 20, 250)
+    collisions.insert(0, dock4)
+    dock5 = Rectangle(1849, -1286, 264, 264)
+    collisions.insert(0, dock5)
+    dock6 = Rectangle(2305, -1286, 264, 264)
+    collisions.insert(0, dock6)
+    dock7 = Rectangle(2084, -1306, 250, 20)
+    collisions.insert(0, dock7)
 
-    return playerrectcollis, tomatorect, markrect, furretrect, collisions
+    return playerx, playery, playerw, playerh, playerrectcollis, tomatorect, markrect, furretrect, collisions
 
 def upd_code(displayInfo, wdown, adown, sdown, ddown, iterate, lastkey, walking, spacesea, background, house1base, house2base, house3base, rail1, rail2, player, house1roof, 
              house2roof, house3roof, tomato, markiplier, furret, deity, tomatoprompt, markprompt, furretprompt, playerrectcollis, tomatorect, markrect, furretrect, 
@@ -575,7 +613,7 @@ def draw_objects(screen, black, displayInfo, spacesea, background, house1base, h
     furretprompt.draw(screen, playerrect, furretrect)
     dialogue.draw(screen)
 
-def get_keydown(lastkey, speaking, colliding=False):
+def get_keydown(lastkey, speaking):
     pressed = pygame.key.get_pressed()
     lastkey = lastkey
     wdown = False
@@ -598,7 +636,7 @@ def get_keydown(lastkey, speaking, colliding=False):
                 
     return wdown, adown, sdown, ddown, lastkey
 
-def upd_rects(wdown, adown, sdown, ddown, playerrectcollis, tomatorect, markrect, furretrect, collisions):
+def upd_rects(wdown, adown, sdown, ddown, playerrectcollis, tomatorect, markrect, furretrect, collisions, playerx, playery, playerw, playerh):
     colliding = False
 
     tomatorect.update(wdown, adown, sdown, ddown, colliding)
@@ -608,7 +646,7 @@ def upd_rects(wdown, adown, sdown, ddown, playerrectcollis, tomatorect, markrect
     for object in collisions:
         object.update(wdown, adown, sdown, ddown, colliding)
 
-    colliding, wdown, adown, sdown, ddown, skipy, skipx = checkcollis(playerrectcollis, collisions, wdown, adown, sdown, ddown)
+    colliding, wdown, adown, sdown, ddown, skipy, skipx = checkcollis(playerrectcollis, collisions, wdown, adown, sdown, ddown, playerx, playery, playerw, playerh)
 
     if colliding:
         tomatorect.update(wdown, adown, sdown, ddown, colliding, skipy, skipx)
@@ -617,25 +655,25 @@ def upd_rects(wdown, adown, sdown, ddown, playerrectcollis, tomatorect, markrect
         for object in collisions:
             object.update(wdown, adown, sdown, ddown, colliding, skipy, skipx)
 
-    return playerrectcollis, tomatorect.rectangle, markrect.rectangle, furretrect.rectangle, colliding, wdown, adown, sdown, ddown
+    return playerrectcollis, tomatorect.rectangle, markrect.rectangle, furretrect.rectangle, wdown, adown, sdown, ddown
 
-def checkcollis(playerrectcollis, collisions, wdown, adown, sdown, ddown):
+def checkcollis(playerrectcollis, collisions, wdown, adown, sdown, ddown, playerx, playery, playerw, playerh):
     colliding = False
     skipy = False
     skipx = False
     for obstructable in collisions:
         if pygame.Rect.colliderect(playerrectcollis, obstructable.rectangle):
             colliding = True
-            if wdown and ((876 < obstructable.x + obstructable.width) or (876+168 > obstructable.x)) and (642+21 > obstructable.y + obstructable.height):
+            if wdown and ((playerx < obstructable.x + obstructable.width) or (playerx+playerw > obstructable.x)) and (playery+playerh > obstructable.y + obstructable.height):
                 wdown = False
                 skipy = True
-            if adown and ((642 < obstructable.y + obstructable.height) or (642+21 > obstructable.y)) and (876+168 > obstructable.x + obstructable.width):
+            if adown and ((playery < obstructable.y + obstructable.height) or (playery+playerh > obstructable.y)) and (playerx+playerw > obstructable.x + obstructable.width):
                 adown = False
                 skipx = True
-            if sdown and ((876 < obstructable.x + obstructable.width) or (876+168 > obstructable.x)) and (642 < obstructable.y):
+            if sdown and ((playerx < obstructable.x + obstructable.width) or (playerx+playerw > obstructable.x)) and (playery < obstructable.y):
                 sdown = False
                 skipy = True
-            if ddown and ((642 < obstructable.y + obstructable.height) or (642+21 > obstructable.y)) and (876 < obstructable.x):
+            if ddown and ((playery < obstructable.y + obstructable.height) or (playery+playerh > obstructable.y)) and (playerx < obstructable.x):
                 ddown = False
                 skipx = True
 
@@ -651,7 +689,6 @@ def start_music():
         pygame.mixer.music.load('audio\\astoryabouttheendoftheworld.mp3')
         pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play(-1)
-    print(pygame.mixer.music.get_volume())
 
 if __name__ == "__main__":
     main()
